@@ -106,7 +106,8 @@ console.log(insults);
 const random = (arr) => arr[Math.floor(Math.random()*arr.length)];
 
 async function handleCommand(c){
-	const s = c.replace("/", "");
+
+	const [s,...rest] = c.replace("/", "").split(" ");
 
 	console.log("RECIEVED COMMAND", c)
 
@@ -137,11 +138,22 @@ async function handleCommand(c){
 		const insult = `You ${[first, second, third].join(" ")}.`
 		send(insultPepe.replace("insult", insult))
 	}
+
+	if(s === "pepe-say"){
+		send(insultPepe.replace("insult", rest.join(" ")))
+	}
+
+	if(s === "info"){
+		send(`Code: https://github.com/jim-fx/hn-pepe-bot`)
+	}
 }
 
 ws.on('message', function message(b) {
 	const data = b.toString();
-	if(data.startsWith("/")){
+
+	const [first] = data.split(" ")
+
+	if(first.startsWith("/")){
 		handleCommand(data);
 	}
 });
