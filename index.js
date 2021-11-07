@@ -3,7 +3,11 @@ import * as _allPepegas from "./pepes.js"
 const {insultPepe, pepe} = _allPepegas;
 const allPepegas = Object.values(_allPepegas);
 
-console.log(allPepegas.length);
+import beemovie from "./beemovie.js"
+import * as fs from "./fs.js";
+import * as _fs from "fs";
+
+console.log("Loaded",allPepegas.length, "Pepegas");
 
 const ws = new WebSocket('wss://mini-ws-chat.deno.dev');
 
@@ -12,7 +16,7 @@ function send(s){
 }
 
 ws.on('open', function open() {
-  ws.send('something');
+	console.log("ws is open")
 });
 
 const insults = `
@@ -69,14 +73,6 @@ yeasty	weather-bitten	wagtail
 `.split("\n").map(a => a.split("\t").map(v => v.trim()));
 
 
-const cow = `
-        \   ^__^
-         \  (oo)\_______
-            (__)\       )\/\
-                ||----w |
-                ||     ||
-`
-
 const cowsay = (msg) => {
 	const filler = new Array(msg.length).fill(null).map(_ => "-").join("")
 	return `
@@ -90,11 +86,16 @@ const cowsay = (msg) => {
            ||     ||`
 }
 
-console.log(cowsay("Eyyy"))
-
 const random = (arr) => arr[Math.floor(Math.random()*arr.length)];
 
 const burger = []
+
+const command = (msg) => {
+	if(!msg) return;
+	send(`+-------------------+
+${msg}
++-------------------+`)
+}
 
 async function handleCommand(c){
 
@@ -103,8 +104,7 @@ async function handleCommand(c){
 	console.log("RECIEVED COMMAND", c)
 
 	if(s === "pepe"){
-		send(`
-			Here is your Pepe:
+		command(`Here is your Pepe:
 
 			${pepe};
 
@@ -122,8 +122,17 @@ async function handleCommand(c){
 		"slightly exciting"
 	]
 
+	if(s === "bee"){
+		const lines = await beemovie;
+		console.log(lines);
+		const i = Math.floor(Math.random()*lines.length);
+
+		command(`Here is your beemovie line (${i}):
+${lines[i]}`);
+	}
+
 	if(s === "pepe-random"){
-		send(`
+		command(`
 Here is your random Pepega:
 	No: ${Math.floor(Math.random()*10000)}
 	Quality: ${random(quality)}
@@ -138,7 +147,7 @@ ${random(allPepegas)}
 		const [,second] = random(insults);
 		const [,,third] = random(insults);
 
-		send(`You ${[first, second, third].join(" ")}.`)
+		command(`You ${[first, second, third].join(" ")}.`)
 
 	}
 
@@ -148,24 +157,24 @@ ${random(allPepegas)}
 		const [,,third] = random(insults);
 
 		const insult = `You ${[first, second, third].join(" ")}.`
-		send(insultPepe.replace("insult", insult))
+		command(insultPepe.replace("insult", insult))
 	}
 
 	if(s === "pepe-say"){
-		send(insultPepe.replace("insult", rest.join(" ")))
+		command(insultPepe.replace("insult", rest.join(" ")))
 	}
 
 	if(s === "cowsay"){
-		send(cowsay(rest.join(" ")))
+		command(cowsay(rest.join(" ")))
 	}
 
 	if(s === "info"){
-		send(`Code: https://github.com/jim-fx/hn-pepe-bot`)
+		command(`Code: https://github.com/jim-fx/hn-pepe-bot`)
 	}
 
 	if(s === "burger"){
 		burger.push(rest.join(" "));
-		send(`
+		command(`
           _..----.._
         .'     o    '.
        /   o       o  \ 
@@ -180,27 +189,59 @@ ${random(allPepegas)}
 			`)
 	}
 
+	if(s === "ls"){
+		command(fs.ls())
+	}
+
+	if(s === "pwd"){
+		command(fs.pwd())
+	}
+
+	if(s === "mkdir"){
+		command(fs.mkdir(...rest));
+	}
+
+	if(s === "cd"){
+		command(fs.cd(...rest));
+	}
+
+	if(s === "rm"){
+		command(fs.rm(...rest));
+	}		
+
 	if(s === "help"){
-		send(`
----
-PEPE_MENU:
+		command(`PEPE_MENU:
 /pepe-random
 /burger
 /pepe-say
 /cowsay
 /insult-pepe
-/insult
----
-			`)
+/insult`)
+	}
+}
+
+const commandHistory = [];
+let unsaved = 0;
+function save(data){
+	commandHistory.push({
+		d:Date.now(),
+		c: data
+	})
+
+	unsaved++;
+
+	if(unsaved > 20){
+		unsaved = 0;
+	_fs.writeFile("./history.json", JSON.stringify(commandHistory), "utf-8", () => {
+		console.log("saved history");
+	})
 	}
 }
 
 ws.on('message', function message(b) {
 	const data = b.toString();
-
-	const [first] = data.split(" ")
-
-	if(first.startsWith("/")){
+	save(data);
+	if(data.startsWith("/")){
 		handleCommand(data);
 	}
 });
