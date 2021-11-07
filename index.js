@@ -1,4 +1,9 @@
 import WebSocket from 'ws';
+import * as _allPepegas from "./pepes.js"
+const {insultPepe, pepe} = _allPepegas;
+const allPepegas = Object.values(_allPepegas);
+
+console.log(allPepegas.length);
 
 const ws = new WebSocket('wss://mini-ws-chat.deno.dev');
 
@@ -10,44 +15,6 @@ ws.on('open', function open() {
   ws.send('something');
 });
 
-const pepe = `
-          ▄█▀▀▀▀▀▀█▄  ▄▀▀▀▀▀▀▄
-        ▄▀░░░░░░▄▄▄▄▀█░░░░░░░░▀▄
-       █░░░░░░▀▀░░░░▀▀█▄▀▀▀▀▀▀▀█▄
-      █░░░░░░░░▄▄████████▄░▄███████▄
-     ▄▀░░░░░░░▀███████████▄██████████▄
-    █▀░░░░░▄▀▀█▀░▄█▄███▄░▀█░▄█▄███░░░█
-   █░░░░░░░▀▀█▀▀▄▄█████▄▄▀▀▄▄█████▀▀▀█
-  █▀░░░░░░░░░░▀▄▄▄▄▄▄▄▄▄▄▀░░░░░░░░▄█▀               
-  █░░░░░░░░░░░░░░░░░░▄▀░░░░░░▀█▀▀▀█▄             
-  █░░░░░░░░░░░▄▄▄▄░░░░░░░░░░░░░░░░░█              
-  █░░░░░░░░▄▀▀░▄▄░▀▀▀▀▀▄▄▄▄▄▄▄▀▀▀▀▀▀█
-  ▀█░░░░░█░▀▄▀▀░░▀▀▀▀▀▄▄▄▄▄▄▄▄▄▄▄▄▄█
-  ▄█▄▄░░░▀▄░░▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▄▄▄▄▄▄▀
-▄▀▀░▀██▄░░░▀▀░░░░░░░░░░░░░░▄▄▄▀▀
-░░░░░░▀▀███▄▄▄▄▄▄▄▄▄▄▄▄▄████▄
-░░░░░░░░░░▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀░░░▀█▄
-░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░█
-`
-const insultPepe = `
-          ▄█▀▀▀▀▀▀█▄  ▄▀▀▀▀▀▀▄
-        ▄▀░░░░░░▄▄▄▄▀█░░░░░░░░▀▄
-       █░░░░░░▀▀░░░░▀▀█▄▀▀▀▀▀▀▀█▄
-      █░░░░░░░░▄▄████████▄░▄███████▄
-     ▄▀░░░░░░░▀███████████▄██████████▄
-    █▀░░░░░▄▀▀█▀░▄█▄███▄░▀█░▄█▄███░░░█
-   █░░░░░░░▀▀█▀▀▄▄█████▄▄▀▀▄▄█████▀▀▀█
-  █▀░░░░░░░░░░▀▄▄▄▄▄▄▄▄▄▄▀░░░░░░░░▄█▀               
-  █░░░░░░░░░░░░░░░░░░▄▀░░░░░░▀█▀▀▀█▄             
-  █░░░░░░░░░░░▄▄▄▄░░░░░░░░░░░░░░░░░█              
-  █░░░░░░░░▄▀▀░▄▄░▀▀▀▀▀▄▄▄▄▄▄▄▀▀▀▀▀▀█   insult
-  ▀█░░░░░█░▀▄▀▀░░▀▀▀▀▀▄▄▄▄▄▄▄▄▄▄▄▄▄█
-  ▄█▄▄░░░▀▄░░▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▄▄▄▄▄▄▀
-▄▀▀░▀██▄░░░▀▀░░░░░░░░░░░░░░▄▄▄▀▀
-░░░░░░▀▀███▄▄▄▄▄▄▄▄▄▄▄▄▄████▄
-░░░░░░░░░░▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀░░░▀█▄
-░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░█
-`
 const insults = `
 artless	base-court	apple-john
 bawdy	bat-fowling	baggage
@@ -101,9 +68,33 @@ weedy	unchin-snouted	whey-face
 yeasty	weather-bitten	wagtail
 `.split("\n").map(a => a.split("\t").map(v => v.trim()));
 
-console.log(insults);
+
+const cow = `
+        \   ^__^
+         \  (oo)\_______
+            (__)\       )\/\
+                ||----w |
+                ||     ||
+`
+
+const cowsay = (msg) => {
+	const filler = new Array(msg.length).fill(null).map(_ => "-").join("")
+	return `
+ / ${filler} \\
+|  ${msg.replace("\n", "")}  |
+ \\ ${filler} /
+   \\   ^__^
+    \\  (oo)\_______
+       (__)\       )\\/\\
+           ||----w |
+           ||     ||`
+}
+
+console.log(cowsay("Eyyy"))
 
 const random = (arr) => arr[Math.floor(Math.random()*arr.length)];
+
+const burger = []
 
 async function handleCommand(c){
 
@@ -117,6 +108,27 @@ async function handleCommand(c){
 
 			${pepe};
 
+			`)
+	}
+
+	const quality = [
+		"common",
+		"rare",
+		"legendary",
+		"really rare",
+		"extremely common",
+		"boring",
+		"normal",
+		"slightly exciting"
+	]
+
+	if(s === "pepe-random"){
+		send(`
+Here is your random Pepega:
+	No: ${Math.floor(Math.random()*10000)}
+	Quality: ${random(quality)}
+
+${random(allPepegas)}
 			`)
 	}
 
@@ -139,12 +151,47 @@ async function handleCommand(c){
 		send(insultPepe.replace("insult", insult))
 	}
 
-	if(s === "pepe-say" || s === "cowsay"){
+	if(s === "pepe-say"){
 		send(insultPepe.replace("insult", rest.join(" ")))
+	}
+
+	if(s === "cowsay"){
+		send(cowsay(rest.join(" ")))
 	}
 
 	if(s === "info"){
 		send(`Code: https://github.com/jim-fx/hn-pepe-bot`)
+	}
+
+	if(s === "burger"){
+		burger.push(rest.join(" "));
+		send(`
+          _..----.._
+        .'     o    '.
+       /   o       o  \ 
+      |o        o     o|
+       '-.._o_____ __.-'
+             
+			${burger.join("\n")}
+
+      |----........----|
+       \              /
+         '----------'
+			`)
+	}
+
+	if(s === "help"){
+		send(`
+---
+PEPE_MENU:
+/pepe-random
+/burger
+/pepe-say
+/cowsay
+/insult-pepe
+/insult
+---
+			`)
 	}
 }
 
