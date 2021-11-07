@@ -139,7 +139,7 @@ async function handleCommand(c){
 		send(insultPepe.replace("insult", insult))
 	}
 
-	if(s === "pepe-say"){
+	if(s === "pepe-say" || s === "cowsay"){
 		send(insultPepe.replace("insult", rest.join(" ")))
 	}
 
